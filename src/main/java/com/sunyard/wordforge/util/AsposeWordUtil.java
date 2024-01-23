@@ -1,8 +1,10 @@
 package com.sunyard.wordforge.util;
 
 import com.aspose.words.License;
+import com.sunyard.wordforge.complex.constant.LicenseConstant;
 import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -12,9 +14,6 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class AsposeWordUtil {
-    private static final String LIC =
-        "C:\\Users\\lenovo\\Downloads\\aspose\\license\\Aspose.TotalProductFamily(20240125).lic";
-
     private static final AsposeWordUtil wordStyleUtil = new AsposeWordUtil();
 
     private static boolean loaded = false;
@@ -30,7 +29,9 @@ public class AsposeWordUtil {
         if (!loaded) {
             License license = new License();
             try {
-                license.setLicense(Files.newInputStream(new File(LIC).toPath()));
+                license.setLicense(
+                    Files.newInputStream(new File(String.valueOf(Paths.get(LicenseConstant.LIC))).toPath())
+                );
                 log.info("License set successfully.");
             } catch (Exception e) {
                 log.error("registerLicense error", e);

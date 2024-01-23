@@ -1,4 +1,4 @@
-package com.sunyard.wordforge.feature;
+package com.sunyard.wordforge.feature.splitter;
 
 import com.aspose.words.*;
 import java.io.File;

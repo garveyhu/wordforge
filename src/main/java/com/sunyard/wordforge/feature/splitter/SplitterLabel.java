@@ -1,6 +1,7 @@
-package com.sunyard.wordforge.feature;
+package com.sunyard.wordforge.feature.splitter;
 
 import com.aspose.words.*;
+import com.sunyard.wordforge.complex.constant.FilePathConstant;
 import com.sunyard.wordforge.util.AsposeWordUtil;
 import java.util.ArrayList;
 import lombok.extern.slf4j.Slf4j;
@@ -13,21 +14,17 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SplitterLabel {
 
-    public static void main(String[] args) throws Exception {
-        String sourcePath = "C:\\Users\\lenovo\\Downloads\\aspose\\doc\\标记拆分.docx";
-        splitDocument(sourcePath);
-    }
-
     /**
      * 按照指定的分隔符拆分文档
      *
      * @param src 源文档路径
+     * @param separator 分隔符
      */
-    private static void splitDocument(String src) {
+    public static void splitDocumentBySeparator(String src, String separator) {
         try {
             AsposeWordUtil.getInstance().registerLicense();
             Document doc = new Document(src);
-            ArrayList<Document> splitDocuments = splitDocumentBySeparator_0(doc, "§");
+            ArrayList<Document> splitDocuments = separator_0(doc, separator);
             saveSplitDocuments(splitDocuments);
         } catch (Exception e) {
             log.error("splitDocument error", e);
@@ -42,7 +39,7 @@ public class SplitterLabel {
      * @param separator 分隔符
      * @return 拆分后的文档集合
      */
-    private static ArrayList<Document> splitDocumentBySeparator_0(Document doc, String separator) {
+    private static ArrayList<Document> separator_0(Document doc, String separator) {
         ArrayList<Document> splitDocs = new ArrayList<>();
         DocumentBuilder builder = new DocumentBuilder(doc);
         NodeCollection paragraphs = doc.getChildNodes(NodeType.PARAGRAPH, true);
@@ -73,7 +70,7 @@ public class SplitterLabel {
      * @param separator 分隔符
      * @return 拆分后的文档集合
      */
-    private static ArrayList<Document> splitDocumentBySeparator_1(Document doc, String separator) {
+    private static ArrayList<Document> separator_1(Document doc, String separator) {
         ArrayList<Document> splitDocs = new ArrayList<>();
         Document currentDoc = (Document) doc.deepClone(false);
         DocumentBuilder currentBuilder = new DocumentBuilder(currentDoc);
@@ -105,7 +102,7 @@ public class SplitterLabel {
      */
     private static void saveSplitDocuments(ArrayList<Document> documents) throws Exception {
         int docNumber = 1;
-        String targetPath = "C:\\Users\\lenovo\\Downloads\\aspose\\doc\\output\\标记拆分_";
+        String targetPath = FilePathConstant.OUTPUT + "Splitter_";
         for (Document splitDoc : documents) {
             splitDoc.save(targetPath + docNumber + ".docx");
             docNumber++;

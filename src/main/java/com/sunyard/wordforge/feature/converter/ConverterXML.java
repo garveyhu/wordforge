@@ -1,9 +1,9 @@
-package com.sunyard.wordforge.feature;
+package com.sunyard.wordforge.feature.converter;
 
 import com.aspose.words.*;
 
 /**
- * Aspose文档xml转换
+ * word转xml
  *
  * @author Archer
  */
