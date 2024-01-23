@@ -12,11 +12,12 @@ public class SplitterTable {
 
     public static void main(String[] args) {
         // Specify the input Word document file path
-//        String inputFilePath = "D:\\home\\go\\resources\\代码测试文档\\spilt\\手机银行客户端（普通版）用户使用指南-2021年冬奥会纪念钞预约.docx";
-        String inputFilePath = "C:\\Users\\lenovo\\Downloads\\aspose\\doc\\本说明文档旨在对截图控件的浏览器控件进行说明.docx";
+        //        String inputFilePath = "D:\\home\\go\\resources\\代码测试文档\\spilt\\手机银行客户端（普通版）用户使用指南-2021年冬奥会纪念钞预约.docx";
+        String inputFilePath =
+            "C:\\Users\\lenovo\\Downloads\\aspose\\doc\\本说明文档旨在对截图控件的浏览器控件进行说明.docx";
 
         // Specify the output directory for the split documents
-//        String outputDirectory = "D:\\home\\go\\resources\\代码测试文档\\spilt";
+        //        String outputDirectory = "D:\\home\\go\\resources\\代码测试文档\\spilt";
         String outputDirectory = "C:\\Users\\lenovo\\Downloads\\aspose\\doc\\";
 
         // Create the output directory if it doesn't exist
@@ -42,38 +43,46 @@ public class SplitterTable {
 
             int tableCount = 1;
             for (Table table : tables) {
-
                 // Get all paragraphs in the table
                 NodeCollection<Paragraph> paragraphs = table.getChildNodes(NodeType.PARAGRAPH, true);
 
                 int paragraphCount = 1;
                 for (Paragraph paragraph : paragraphs) {
-
-                    if (paragraph.getText().trim().isEmpty()){
+                    if (paragraph.getText().trim().isEmpty()) {
                         continue;
                     }
 
                     // Create a new document for each paragraph
                     Document newDocument = new Document();
-                    NodeImporter importer = new NodeImporter(document, newDocument, ImportFormatMode.KEEP_SOURCE_FORMATTING);
+                    NodeImporter importer = new NodeImporter(
+                        document,
+                        newDocument,
+                        ImportFormatMode.KEEP_SOURCE_FORMATTING
+                    );
 
                     Node importedNode = importer.importNode(paragraph, true);
                     newDocument.getFirstSection().getBody().appendChild(importedNode);
 
                     // Save the new document to a file
-                    String outputFilePath = outputDirectory + File.separator +
-                            "Table_" + tableCount + "_Paragraph_" + paragraphCount + ".docx";
+                    String outputFilePath =
+                        outputDirectory +
+                        File.separator +
+                        "Table_" +
+                        tableCount +
+                        "_Paragraph_" +
+                        paragraphCount +
+                        ".docx";
                     newDocument.save(outputFilePath);
 
-                    System.out.println("Table " + tableCount + ", Paragraph " + paragraphCount +
-                            " saved to: " + outputFilePath);
+                    System.out.println(
+                        "Table " + tableCount + ", Paragraph " + paragraphCount + " saved to: " + outputFilePath
+                    );
 
                     paragraphCount++;
                 }
 
                 tableCount++;
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -84,7 +93,7 @@ public class SplitterTable {
      * @param inputFilePath
      * @param outputDirectory
      */
-    public static void splitDocumentByHeadline(String inputFilePath, String outputDirectory){
+    public static void splitDocumentByHeadline(String inputFilePath, String outputDirectory) {
         /*try {
             //使用 Aspose.Words for Java 按标题拆分文档的 Java 代码
             Document doc = new Document(inputFilePath);
@@ -149,8 +158,5 @@ public class SplitterTable {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
     }
-
 }
-

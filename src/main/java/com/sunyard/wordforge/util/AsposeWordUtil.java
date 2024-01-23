@@ -12,8 +12,8 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class AsposeWordUtil {
-
-    private static final String LIC = "C:\\Users\\lenovo\\Downloads\\aspose\\license\\Aspose.TotalProductFamily(20240125).lic";
+    private static final String LIC =
+        "C:\\Users\\lenovo\\Downloads\\aspose\\license\\Aspose.TotalProductFamily(20240125).lic";
 
     private static final AsposeWordUtil wordStyleUtil = new AsposeWordUtil();
 
@@ -39,5 +39,3 @@ public class AsposeWordUtil {
         }
     }
 }
-
-

@@ -1,7 +1,7 @@
 package com.sunyard.wordforge.feature;
 
-import com.sunyard.wordforge.util.AsposeWordUtil;
 import com.aspose.words.*;
+import com.sunyard.wordforge.util.AsposeWordUtil;
 import java.util.ArrayList;
 
 /**
@@ -10,6 +10,7 @@ import java.util.ArrayList;
  * @author Archer
  */
 public class SplitterSection {
+
     public static void main(String[] args) throws Exception {
         String sourcePath = "C:\\Users\\lenovo\\Downloads\\aspose\\doc\\信用类PAD尽调内容-开次开发.docx";
         splitDocumentBySections(sourcePath);

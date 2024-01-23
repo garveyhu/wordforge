@@ -44,4 +44,23 @@
       <systemPath>${project.basedir}/src/main/resources/lib/aspose-words-24.1-jdk17.jar</systemPath>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>com.hubspot.maven.plugins</groupId>
+        <artifactId>prettier-maven-plugin</artifactId>
+        <!-- Find the latest version at https://mvnrepository.com/artifact/com.hubspot.maven.plugins/prettier-maven-plugin -->
+        <version>0.10</version>
+        <configuration>
+          <printWidth>120</printWidth> <!-- 每行代码的最大宽度 -->
+          <tabWidth>4</tabWidth> <!-- 缩进的空格数 -->
+          <useTabs>false</useTabs> <!-- 使用空格而不是制表符进行缩进 -->
+          <endOfLine>lf</endOfLine> <!-- 行尾序列 -->
+          <ignoreConfigFile>true</ignoreConfigFile> <!-- 忽略单独的 Prettier 配置文件 -->
+          <ignoreEditorConfig>true</ignoreEditorConfig> <!-- 忽略 EditorConfig 文件 -->
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>

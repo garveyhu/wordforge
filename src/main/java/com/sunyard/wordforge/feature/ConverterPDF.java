@@ -1,7 +1,7 @@
 package com.sunyard.wordforge.feature;
 
-import com.sunyard.wordforge.util.AsposeWordUtil;
 import com.aspose.words.Document;
+import com.sunyard.wordforge.util.AsposeWordUtil;
 import java.io.File;
 import java.io.FileOutputStream;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +13,8 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class ConverterPDF {
-    public static void main(String[] args) throws Exception {
+
+    public static void main(String[] args) {
         String sourcePath = "C:\\Users\\lenovo\\Downloads\\aspose\\doc\\多元素文档.docx";
         word(sourcePath);
     }

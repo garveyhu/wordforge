@@ -11,7 +11,8 @@ public class ConverterXML {
 
     public static void main(String[] args) {
         // Specify the input WordXML file path
-        String xmlFilePath = "D:\\home\\go\\resources\\代码测试文档\\手机银行客户端（普通版）用户使用指南-2021年冬奥会纪念钞预约(1).xml";
+        String xmlFilePath =
+            "D:\\home\\go\\resources\\代码测试文档\\手机银行客户端（普通版）用户使用指南-2021年冬奥会纪念钞预约(1).xml";
 
         // Specify the output DOCX file path
         String outputDocxPath = "D:\\home\\go\\resources\\代码测试文档\\spilt\\aspose\\转换结果\\XmlToDocx.docx";
@@ -45,4 +46,3 @@ public class ConverterXML {
         }
     }
 }
-

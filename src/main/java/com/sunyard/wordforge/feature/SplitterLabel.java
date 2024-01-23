@@ -1,7 +1,7 @@
 package com.sunyard.wordforge.feature;
 
-import com.sunyard.wordforge.util.AsposeWordUtil;
 import com.aspose.words.*;
+import com.sunyard.wordforge.util.AsposeWordUtil;
 import java.util.ArrayList;
 import lombok.extern.slf4j.Slf4j;
 
@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class SplitterLabel {
+
     public static void main(String[] args) throws Exception {
         String sourcePath = "C:\\Users\\lenovo\\Downloads\\aspose\\doc\\标记拆分.docx";
         splitDocument(sourcePath);
