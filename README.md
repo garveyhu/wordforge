@@ -27,3 +27,13 @@ WordForge提供了以下主要功能：
    cd wordforge
    mvn clean install
    ```
+
+## 快速开始
+
+```java
+# 按照指定的分隔符拆分文档
+SplitterLabel.splitDocumentBySeparator("filePath", "§");
+
+# word转pdf
+ConverterPDF.wordToPdf("filePath");
+```
