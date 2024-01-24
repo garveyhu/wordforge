@@ -1,11 +1,11 @@
 package com.sunyard.wordforge.feature.converter;
 
 import com.aspose.words.Document;
-import com.sunyard.wordforge.complex.constant.FilePathConstant;
+import com.aspose.words.SaveFormat;
 import com.sunyard.wordforge.util.AsposeWordUtil;
-import com.sunyard.wordforge.util.ComplexUtil;
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -17,21 +17,23 @@ import lombok.extern.slf4j.Slf4j;
 public class ConverterPDF {
 
     /**
-     * word转pdf
+     * Word转PDF
      *
-     * @param src 源文件路径
+     * @param inputStream 源文件输入流
+     * @return PDF数据输出流
      */
-    public static void wordToPdf(String src) {
-        log.info("开始转换文件：" + src);
-        String outputFilePath = FilePathConstant.OUTPUT + ComplexUtil.getFileNameWithoutExtension(src) + ".pdf";
+    public static OutputStream wordToPdf(InputStream inputStream) throws Exception {
+        log.info("开始转换文件");
         long start = System.currentTimeMillis();
-        try {
-            AsposeWordUtil.getInstance().registerLicense();
-            Document doc = new Document(src);
-            doc.save(outputFilePath, com.aspose.words.SaveFormat.PDF);
-        } catch (Exception e) {
-            log.error("wordToPdf error", e);
-        }
+
+        OutputStream outputStream = new ByteArrayOutputStream();
+        AsposeWordUtil.getInstance().registerLicense();
+
+        Document doc = new Document(inputStream);
+        doc.save(outputStream, SaveFormat.PDF);
+
         log.info("转换耗时：" + (System.currentTimeMillis() - start) + "ms");
+
+        return outputStream;
     }
 }

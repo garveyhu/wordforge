@@ -5,7 +5,7 @@ import com.sunyard.wordforge.util.AsposeWordUtil;
 import java.util.ArrayList;
 
 /**
- * Aspose文档分节符拆分
+ * 分节符拆分
  *
  * @author Archer
  */

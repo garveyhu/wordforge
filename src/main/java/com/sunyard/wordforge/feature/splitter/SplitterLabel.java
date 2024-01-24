@@ -3,11 +3,16 @@ package com.sunyard.wordforge.feature.splitter;
 import com.aspose.words.*;
 import com.sunyard.wordforge.complex.constant.FilePathConstant;
 import com.sunyard.wordforge.util.AsposeWordUtil;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.List;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Aspose文档标记拆分
+ * 标记拆分
  *
  * @author Archer
  */
@@ -17,18 +22,24 @@ public class SplitterLabel {
     /**
      * 按照指定的分隔符拆分文档
      *
-     * @param src 源文档路径
+     * @param inputStream 源文档输入流
      * @param separator 分隔符
+     * @return 拆分后的文档输出流集合
      */
-    public static void splitDocumentBySeparator(String src, String separator) {
-        try {
-            AsposeWordUtil.getInstance().registerLicense();
-            Document doc = new Document(src);
-            ArrayList<Document> splitDocuments = separator_0(doc, separator);
-            saveSplitDocuments(splitDocuments);
-        } catch (Exception e) {
-            log.error("splitDocument error", e);
+    @SneakyThrows
+    public static List<OutputStream> splitDocumentBySeparator(InputStream inputStream, String separator) {
+        AsposeWordUtil.getInstance().registerLicense();
+        Document doc = new Document(inputStream);
+        List<Document> splitDocuments = separator_0(doc, separator);
+
+        List<OutputStream> outputStreams = new ArrayList<>();
+        for (Document splitDoc : splitDocuments) {
+            OutputStream outputStream = new ByteArrayOutputStream();
+            splitDoc.save(outputStream, SaveFormat.DOCX);
+            outputStreams.add(outputStream);
         }
+
+        return outputStreams;
     }
 
     /**
@@ -39,9 +50,8 @@ public class SplitterLabel {
      * @param separator 分隔符
      * @return 拆分后的文档集合
      */
-    private static ArrayList<Document> separator_0(Document doc, String separator) {
-        ArrayList<Document> splitDocs = new ArrayList<>();
-        DocumentBuilder builder = new DocumentBuilder(doc);
+    private static List<Document> separator_0(Document doc, String separator) {
+        List<Document> splitDocs = new ArrayList<>();
         NodeCollection paragraphs = doc.getChildNodes(NodeType.PARAGRAPH, true);
 
         Document currentDoc = (Document) doc.deepClone(false);
@@ -70,8 +80,8 @@ public class SplitterLabel {
      * @param separator 分隔符
      * @return 拆分后的文档集合
      */
-    private static ArrayList<Document> separator_1(Document doc, String separator) {
-        ArrayList<Document> splitDocs = new ArrayList<>();
+    private static List<Document> separator_1(Document doc, String separator) {
+        List<Document> splitDocs = new ArrayList<>();
         Document currentDoc = (Document) doc.deepClone(false);
         DocumentBuilder currentBuilder = new DocumentBuilder(currentDoc);
 
@@ -100,7 +110,7 @@ public class SplitterLabel {
      *
      * @param documents 拆分后的文档集合
      */
-    private static void saveSplitDocuments(ArrayList<Document> documents) throws Exception {
+    private static void saveSplitDocuments(List<Document> documents) throws Exception {
         int docNumber = 1;
         String targetPath = FilePathConstant.OUTPUT + "Splitter_";
         for (Document splitDoc : documents) {

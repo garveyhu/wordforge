@@ -4,7 +4,7 @@ import com.aspose.words.*;
 import java.io.File;
 
 /**
- * Aspose文档表格拆分
+ * 表格拆分
  *
  * @author Archer
  */
