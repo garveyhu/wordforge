@@ -1,17 +1,22 @@
 package com.sunyard.wordforge.api.controller;
 
+import com.sunyard.wordforge.complex.constant.FilePathConstant;
 import com.sunyard.wordforge.complex.constant.MimeTypeConstant;
 import com.sunyard.wordforge.feature.converter.ConverterPDF;
 import com.sunyard.wordforge.feature.splitter.SplitterLabel;
 import com.sunyard.wordforge.util.StreamUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,8 +39,36 @@ public class ConverterController {
     public void word2pdf(@RequestParam("file") MultipartFile file) throws Exception {
         InputStream inputStream = file.getInputStream();
         OutputStream outputStream = ConverterPDF.wordToPdf(inputStream);
-        StreamUtil.outputStreamToResponse(outputStream, response, "word2pdf.pdf", MimeTypeConstant.APPLICATION_PDF);
+
+        StreamUtil.outputStreamToFile(outputStream, FilePathConstant.OUTPUT, "word2pdf.pdf");
+        InputStream inputStreamLocal = StreamUtil.filePathToInputStream(FilePathConstant.OUTPUT + "word2pdf.pdf");
+        OutputStream outputStreamLocal = new ByteArrayOutputStream();
+
+        byte[] buffer = new byte[1024];
+        int length;
+        while ((length = inputStreamLocal.read(buffer)) != -1) {
+            outputStreamLocal.write(buffer, 0, length);
+        }
+
+        StreamUtil.outputStreamToResponse(outputStreamLocal, response, "word2pdf.pdf", MimeTypeConstant.APPLICATION_PDF);
     }
+
+//    @ApiOperation(value = "word转pdf")
+//    @PostMapping("/word2pdf2")
+//    public ResponseEntity<byte[]> word2pdf2(@RequestParam("file") MultipartFile file) throws Exception {
+//        InputStream inputStream = file.getInputStream();
+//        OutputStream outputStream = ConverterPDF.wordToPdf(inputStream);
+//
+//        StreamUtil.outputStreamToFile(outputStream, FilePathConstant.OUTPUT, "word2pdf.pdf");
+//
+//        byte[] body = baos.toByteArray();
+//
+//        HttpHeaders headers = new HttpHeaders();//设置响应头
+//        headers.add("Content-Disposition", "attachment;filename=test.pdf");
+//        HttpStatus statusCode = HttpStatus.OK;//设置响应吗
+//        ResponseEntity<byte[]> resp = new ResponseEntity<byte[]>(body, headers, statusCode);
+//        return resp;
+//    }
 
     @ApiOperation(value = "word切分")
     @PostMapping("/split")

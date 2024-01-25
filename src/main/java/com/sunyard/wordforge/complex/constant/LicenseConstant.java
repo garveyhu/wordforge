@@ -6,5 +6,5 @@ package com.sunyard.wordforge.complex.constant;
  * @author Archer
  */
 public class LicenseConstant {
-    public static final String LIC = "src/main/resources/lib/Aspose.TotalProductFamily(20240125).lic";
+    public static final String LIC = "src/main/resources/lib/Aspose.TotalProductFamily(20240225).lic";
 }
