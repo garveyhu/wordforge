@@ -42,46 +42,19 @@ public class ConverterController {
         InputStream inputStream = file.getInputStream();
         OutputStream outputStream = ConverterPDF.wordToPdf(inputStream);
 
-        StreamUtil.outputStreamToFile(outputStream, FilePathConstant.OUTPUT, "word2pdf.pdf");
-        InputStream inputStreamLocal = StreamUtil.filePathToInputStream(FilePathConstant.OUTPUT + "word2pdf.pdf");
-        OutputStream outputStreamLocal = new ByteArrayOutputStream();
-
-        byte[] buffer = new byte[1024];
-        int length;
-        while ((length = inputStreamLocal.read(buffer)) != -1) {
-            outputStreamLocal.write(buffer, 0, length);
-        }
-
         StreamUtil.outputStreamToResponse(
-            outputStreamLocal,
+            outputStream,
             response,
             "word2pdf.pdf",
             MimeTypeConstant.APPLICATION_PDF
         );
     }
 
-    //    @ApiOperation(value = "word转pdf")
-    //    @PostMapping("/word2pdf2")
-    //    public ResponseEntity<byte[]> word2pdf2(@RequestParam("file") MultipartFile file) throws Exception {
-    //        InputStream inputStream = file.getInputStream();
-    //        OutputStream outputStream = ConverterPDF.wordToPdf(inputStream);
-    //
-    //        StreamUtil.outputStreamToFile(outputStream, FilePathConstant.OUTPUT, "word2pdf.pdf");
-    //
-    //        byte[] body = baos.toByteArray();
-    //
-    //        HttpHeaders headers = new HttpHeaders();//设置响应头
-    //        headers.add("Content-Disposition", "attachment;filename=test.pdf");
-    //        HttpStatus statusCode = HttpStatus.OK;//设置响应吗
-    //        ResponseEntity<byte[]> resp = new ResponseEntity<byte[]>(body, headers, statusCode);
-    //        return resp;
-    //    }
-
     @ApiOperation(value = "word切分")
     @ApiImplicitParams(
         {
-            @ApiImplicitParam(name = "file", value = "源文件", required = true, dataType = "__file"),
-            @ApiImplicitParam(name = "separator", value = "分隔符", required = true, dataType = "String", example = "§")
+            @ApiImplicitParam(name = "file", value = "源文件", required = true),
+            @ApiImplicitParam(name = "separator", value = "分隔符", required = true, example = "§")
         }
     )
     @PostMapping("/split")

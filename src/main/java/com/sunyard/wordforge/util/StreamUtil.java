@@ -1,5 +1,6 @@
 package com.sunyard.wordforge.util;
 
+import com.sunyard.wordforge.complex.constant.FilePathConstant;
 import com.sunyard.wordforge.complex.constant.MimeTypeConstant;
 import java.io.*;
 import java.net.URLEncoder;
@@ -105,6 +106,7 @@ public class StreamUtil {
         setResponseHeaders(response, fileName, contentType);
         if (outputStream instanceof ByteArrayOutputStream) {
             response.getOutputStream().write(((ByteArrayOutputStream) outputStream).toByteArray());
+//            StreamUtil.outputStreamToFile(outputStream, FilePathConstant.OUTPUT, "word2pdf1111.pdf");
         }
     }
 
