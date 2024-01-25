@@ -22,16 +22,18 @@ public class SwaggerConfiguration {
     @Bean(value = "defaultApi2")
     public Docket defaultApi2() {
         return new Docket(DocumentationType.SWAGGER_2)
-                .apiInfo(new ApiInfoBuilder()
-                        .title("wordforge")
-                        .description("word熔炉")
-                        .termsOfServiceUrl("https://www.sunyard.com")
-                        .contact(new Contact("Archer", "https://ip:port/doc.html", "h96599021@gmail.com"))
-                        .version("1.0")
-                        .build())
-                .select()
-                .apis(RequestHandlerSelectors.basePackage("com.sunyard.wordforge"))
-                .paths(PathSelectors.any())
-                .build();
+            .apiInfo(
+                new ApiInfoBuilder()
+                    .title("wordforge")
+                    .description("word熔炉")
+                    .termsOfServiceUrl("https://www.sunyard.com")
+                    .contact(new Contact("Archer", "https://ip:port/doc.html", "h96599021@gmail.com"))
+                    .version("1.0")
+                    .build()
+            )
+            .select()
+            .apis(RequestHandlerSelectors.basePackage("com.sunyard.wordforge"))
+            .paths(PathSelectors.any())
+            .build();
     }
 }

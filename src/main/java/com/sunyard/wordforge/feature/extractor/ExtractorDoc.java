@@ -38,7 +38,7 @@ public class ExtractorDoc {
      * @param inputStream 源文档输入流
      * @return 提取后的文档内容
      */
-    private static JSONArray extract(InputStream inputStream) throws Exception {
+    public static JSONArray extract(InputStream inputStream) throws Exception {
         AsposeWordUtil.getInstance().registerLicense();
         Document doc = new Document(inputStream);
         JSONArray data = new JSONArray();
@@ -85,7 +85,14 @@ public class ExtractorDoc {
             JSONObject style = new JSONObject();
             style.put("bold", run.getFont().getBold());
             style.put("italic", run.getFont().getItalic());
-            style.put("color", new int[]{run.getFont().getColor().getRed(), run.getFont().getColor().getGreen(), run.getFont().getColor().getBlue()});
+            style.put(
+                "color",
+                new int[] {
+                    run.getFont().getColor().getRed(),
+                    run.getFont().getColor().getGreen(),
+                    run.getFont().getColor().getBlue()
+                }
+            );
 
             textInfo.put("style", style);
             textInfo.put("text", Collections.singletonList(run.getText()));

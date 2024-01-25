@@ -36,7 +36,14 @@ public class GlobalExceptionHandler {
     /**
      * 参数错误异常
      */
-    @ExceptionHandler({MethodArgumentNotValidException.class, BindException.class, HttpMessageNotReadableException.class, ConstraintViolationException.class})
+    @ExceptionHandler(
+        {
+            MethodArgumentNotValidException.class,
+            BindException.class,
+            HttpMessageNotReadableException.class,
+            ConstraintViolationException.class
+        }
+    )
     public ResultVO<?> handleException(Exception e) {
         log.error("┗|｀O′|┛ 参数错误异常:", e);
         if (e instanceof MethodArgumentNotValidException) {
@@ -45,12 +52,23 @@ public class GlobalExceptionHandler {
             StringBuilder message = new StringBuilder();
             if (result.hasErrors()) {
                 List<ObjectError> errors = result.getAllErrors();
-                errors.forEach(p -> {
-                    FieldError fieldError = (FieldError) p;
-                    message.append(fieldError.getField()).append(":").append(fieldError.getDefaultMessage()).append(",");
-                    log.error("┗|｀O′|┛ 请求参数错误：{},field:{},errorMessage:{}", fieldError.getObjectName(), fieldError.getField(), fieldError.getDefaultMessage());
-                });
-                message.deleteCharAt(message.length()-1);
+                errors.forEach(
+                    p -> {
+                        FieldError fieldError = (FieldError) p;
+                        message
+                            .append(fieldError.getField())
+                            .append(":")
+                            .append(fieldError.getDefaultMessage())
+                            .append(",");
+                        log.error(
+                            "┗|｀O′|┛ 请求参数错误：{},field:{},errorMessage:{}",
+                            fieldError.getObjectName(),
+                            fieldError.getField(),
+                            fieldError.getDefaultMessage()
+                        );
+                    }
+                );
+                message.deleteCharAt(message.length() - 1);
             }
             return ResultVO.create(false, 900, message.toString());
         } else if (e instanceof BindException) {

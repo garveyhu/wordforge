@@ -19,7 +19,10 @@ class SplitterLabelTest {
     @Test
     void splitDocumentBySeparatorTest() {
         String sourcePath = FileResourceConstant.SPLITTER_LABEL;
-        List<OutputStream> outputStreams = SplitterLabel.splitDocumentBySeparator(StreamUtil.filePathToInputStream(sourcePath), "§");
+        List<OutputStream> outputStreams = SplitterLabel.splitDocumentBySeparator(
+            StreamUtil.filePathToInputStream(sourcePath),
+            "§"
+        );
         StreamUtil.outputStreamsToFiles(outputStreams, FilePathConstant.OUTPUT, null);
     }
 }

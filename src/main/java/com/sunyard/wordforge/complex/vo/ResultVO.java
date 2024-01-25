@@ -1,7 +1,7 @@
 package com.sunyard.wordforge.complex.vo;
 
-import com.sunyard.wordforge.complex.enums.ResultCode;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.sunyard.wordforge.complex.enums.ResultCode;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,7 +17,6 @@ import lombok.extern.log4j.Log4j2;
 @AllArgsConstructor
 @Log4j2
 public class ResultVO<T> {
-
     /**
      * 是否成功
      */
@@ -30,6 +29,7 @@ public class ResultVO<T> {
      * 状态提示
      */
     private String msg;
+
     /**
      * 总数
      */

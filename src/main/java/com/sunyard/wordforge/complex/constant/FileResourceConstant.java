@@ -10,5 +10,5 @@ public class FileResourceConstant {
 
     public static final String SPLITTER_LABEL = "C:\\Users\\lenovo\\Downloads\\aspose\\doc\\标记拆分.docx";
 
-     public static final String ANIMATION_MOVIE = "C:\\Users\\lenovo\\Downloads\\aspose\\doc\\动画电影赏析.docx";
+    public static final String ANIMATION_MOVIE = "C:\\Users\\lenovo\\Downloads\\aspose\\doc\\动画电影赏析.docx";
 }

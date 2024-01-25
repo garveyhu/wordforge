@@ -68,15 +68,21 @@ public class StreamUtil {
      * @param destinationDirectory 输出目录
      * @param fileNames            可选的文件名列表（可以为空或部分为空）
      */
-    public static void outputStreamsToFiles(List<OutputStream> outputStreams, String destinationDirectory, List<String> fileNames) {
+    public static void outputStreamsToFiles(
+        List<OutputStream> outputStreams,
+        String destinationDirectory,
+        List<String> fileNames
+    ) {
         if (fileNames != null && outputStreams.size() != fileNames.size()) {
-            throw new IllegalArgumentException("The number of output streams and file names must be equal, or file names can be null");
+            throw new IllegalArgumentException(
+                "The number of output streams and file names must be equal, or file names can be null"
+            );
         }
 
         for (int i = 0; i < outputStreams.size(); i++) {
             String fileName = (fileNames == null || fileNames.get(i) == null || fileNames.get(i).trim().isEmpty())
-                    ? generateUniqueFileName()
-                    : fileNames.get(i);
+                ? generateUniqueFileName()
+                : fileNames.get(i);
             outputStreamToFile(outputStreams.get(i), destinationDirectory, fileName);
         }
     }
@@ -89,7 +95,13 @@ public class StreamUtil {
      * @param fileName     文件名
      * @param contentType  内容类型
      */
-    public static void outputStreamToResponse(OutputStream outputStream, HttpServletResponse response, String fileName, String contentType) throws IOException {
+    public static void outputStreamToResponse(
+        OutputStream outputStream,
+        HttpServletResponse response,
+        String fileName,
+        String contentType
+    )
+        throws IOException {
         setResponseHeaders(response, fileName, contentType);
         if (outputStream instanceof ByteArrayOutputStream) {
             response.getOutputStream().write(((ByteArrayOutputStream) outputStream).toByteArray());
@@ -103,7 +115,12 @@ public class StreamUtil {
      * @param response      HttpServletResponse
      * @param zipFileName   ZIP文件名
      */
-    public static void outputStreamsToResponseAsZip(List<OutputStream> outputStreams, HttpServletResponse response, String zipFileName) throws IOException {
+    public static void outputStreamsToResponseAsZip(
+        List<OutputStream> outputStreams,
+        HttpServletResponse response,
+        String zipFileName
+    )
+        throws IOException {
         setResponseHeaders(response, zipFileName, MimeTypeConstant.APPLICATION_ZIP);
 
         try (ZipOutputStream zippedOut = new ZipOutputStream(response.getOutputStream())) {
@@ -124,10 +141,14 @@ public class StreamUtil {
      * @param fileName    文件名
      * @param contentType 内容类型
      */
-    private static void setResponseHeaders(HttpServletResponse response, String fileName, String contentType) throws UnsupportedEncodingException {
+    private static void setResponseHeaders(HttpServletResponse response, String fileName, String contentType)
+        throws UnsupportedEncodingException {
         response.setContentType(contentType);
         response.setCharacterEncoding("UTF-8");
-        response.setHeader("Content-Disposition", "attachment; filename=\"" + URLEncoder.encode(fileName, "UTF-8") + "\"");
+        response.setHeader(
+            "Content-Disposition",
+            "attachment; filename=\"" + URLEncoder.encode(fileName, "UTF-8") + "\""
+        );
     }
 
     /**

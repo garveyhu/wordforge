@@ -11,7 +11,6 @@ import lombok.Getter;
  */
 @Getter
 public class CustomException extends RuntimeException {
-
     /**
      * 状态码类
      */
@@ -31,5 +30,4 @@ public class CustomException extends RuntimeException {
         super(customMessage);
         this.resultCode = resultCode;
     }
-
 }
