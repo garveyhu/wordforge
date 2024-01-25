@@ -34,6 +34,8 @@ public class ConverterPDF {
 
         log.info("转换耗时：" + (System.currentTimeMillis() - start) + "ms");
 
+        inputStream.close();
+
         return outputStream;
     }
 }

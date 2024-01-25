@@ -39,6 +39,8 @@ public class SplitterLabel {
             outputStreams.add(outputStream);
         }
 
+        inputStream.close();
+
         return outputStreams;
     }
 

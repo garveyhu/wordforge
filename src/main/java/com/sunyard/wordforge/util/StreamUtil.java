@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -105,7 +106,8 @@ public class StreamUtil {
         throws IOException {
         setResponseHeaders(response, fileName, contentType);
         if (outputStream instanceof ByteArrayOutputStream) {
-            response.getOutputStream().write(((ByteArrayOutputStream) outputStream).toByteArray());
+            OutputStream os = response.getOutputStream();
+            os.write(((ByteArrayOutputStream) outputStream).toByteArray());
 //            StreamUtil.outputStreamToFile(outputStream, FilePathConstant.OUTPUT, "word2pdf1111.pdf");
         }
     }
@@ -159,6 +161,6 @@ public class StreamUtil {
      * @return 唯一的文件名
      */
     private static String generateUniqueFileName() {
-        return "Document_" + Instant.now().toEpochMilli() + ".docx";
+        return Instant.now().getEpochSecond() + "_" + UUID.randomUUID();
     }
 }

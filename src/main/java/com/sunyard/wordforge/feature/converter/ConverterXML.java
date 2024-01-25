@@ -1,6 +1,10 @@
 package com.sunyard.wordforge.feature.converter;
 
 import com.aspose.words.*;
+import com.sunyard.wordforge.util.AsposeWordUtil;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * word转xml
@@ -9,40 +13,33 @@ import com.aspose.words.*;
  */
 public class ConverterXML {
 
-    public static void main(String[] args) {
-        // Specify the input WordXML file path
-        String xmlFilePath =
-            "D:\\home\\go\\resources\\代码测试文档\\手机银行客户端（普通版）用户使用指南-2021年冬奥会纪念钞预约(1).xml";
+    /**
+     * Word转WordXML
+     *
+     * @param wordInputStream 源文件输入流
+     * @return WordXML数据输出流
+     */
+    public static OutputStream convertWordToWordXML(InputStream wordInputStream) throws Exception {
+        AsposeWordUtil.getInstance().registerLicense();
+        Document doc = new Document(wordInputStream);
+        OutputStream wordXMLOutputStream = new ByteArrayOutputStream();
+        doc.save(wordXMLOutputStream, SaveFormat.WORD_ML);
 
-        // Specify the output DOCX file path
-        String outputDocxPath = "D:\\home\\go\\resources\\代码测试文档\\spilt\\aspose\\转换结果\\XmlToDocx.docx";
-
-        // Convert WordXML to DOCX using Aspose.Words
-        convertWordXMLToDocx(xmlFilePath, outputDocxPath);
+        return wordXMLOutputStream;
     }
 
     /**
-     * 将WordXml转换为Word
-     * @param xmlFilePath    wordXml文件路径
-     * @param outputDocxPath 生成文件路径
+     * WordXML转Word
+     *
+     * @param wordXMLInputStream 源文件输入流
+     * @return Word数据输出流
      */
-    public static void convertWordXMLToDocx(String xmlFilePath, String outputDocxPath) {
-        try {
-            // 初始化文档
-            Document doc = new Document(xmlFilePath);
+    public static OutputStream convertWordXMLToWord(InputStream wordXMLInputStream) throws Exception {
+        AsposeWordUtil.getInstance().registerLicense();
+        Document doc = new Document(wordXMLInputStream);
+        OutputStream wordOutputStream = new ByteArrayOutputStream();
+        doc.save(wordOutputStream, SaveFormat.DOCX);
 
-            // 创建DocumentBuilder
-            DocumentBuilder builder = new DocumentBuilder();
-
-            // 读取WordXML文件并将其内容插入到DocumentBuilder中
-            builder.insertDocument(doc, ImportFormatMode.USE_DESTINATION_STYLES);
-
-            // Save the Document to DOCX format
-            doc.save(outputDocxPath);
-
-            System.out.println("WordXML converted to DOCX: " + outputDocxPath);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        return wordOutputStream;
     }
 }

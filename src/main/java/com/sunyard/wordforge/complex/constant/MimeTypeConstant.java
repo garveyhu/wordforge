@@ -9,6 +9,7 @@ public class MimeTypeConstant {
     public static final String APPLICATION_ZIP = "application/zip";
     public static final String APPLICATION_PDF = "application/pdf";
     public static final String APPLICATION_MSWORD = "application/msword";
+    public static final String APPLICATION_XML = "application/xml";
     public static final String APPLICATION_VND_OPENXMLFORMATS_OFFICEDOCUMENT_WORDPROCESSINGML_DOCUMENT =
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
     public static final String APPLICATION_VND_MS_EXCEL = "application/vnd.ms-excel";
@@ -19,4 +20,5 @@ public class MimeTypeConstant {
     public static final String TEXT_CSV = "text/csv";
     public static final String IMAGE_JPEG = "image/jpeg";
     public static final String IMAGE_PNG = "image/png";
+
 }

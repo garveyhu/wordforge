@@ -1,24 +1,17 @@
 package com.sunyard.wordforge.api.controller;
 
-import com.sunyard.wordforge.complex.constant.FilePathConstant;
 import com.sunyard.wordforge.complex.constant.MimeTypeConstant;
 import com.sunyard.wordforge.feature.converter.ConverterPDF;
-import com.sunyard.wordforge.feature.splitter.SplitterLabel;
+import com.sunyard.wordforge.feature.converter.ConverterXML;
 import com.sunyard.wordforge.util.StreamUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -36,7 +29,7 @@ public class ConverterController {
     private HttpServletResponse response;
 
     @ApiOperation(value = "word转pdf")
-    @ApiImplicitParams({ @ApiImplicitParam(name = "file", value = "源文件", required = true, dataType = "__file") })
+    @ApiImplicitParams({ @ApiImplicitParam(name = "file", value = "源文件", required = true) })
     @PostMapping("/word2pdf")
     public void word2pdf(@RequestParam("file") MultipartFile file) throws Exception {
         InputStream inputStream = file.getInputStream();
@@ -50,18 +43,33 @@ public class ConverterController {
         );
     }
 
-    @ApiOperation(value = "word切分")
-    @ApiImplicitParams(
-        {
-            @ApiImplicitParam(name = "file", value = "源文件", required = true),
-            @ApiImplicitParam(name = "separator", value = "分隔符", required = true, example = "§")
-        }
-    )
-    @PostMapping("/split")
-    public void split(@RequestParam("file") MultipartFile file, @RequestParam("separator") String separator)
-        throws IOException {
+    @ApiOperation(value = "word转wordml")
+    @ApiImplicitParams({ @ApiImplicitParam(name = "file", value = "源文件", required = true) })
+    @PostMapping("/word2wordml")
+    public void word2wordml(@RequestParam("file") MultipartFile file) throws Exception {
         InputStream inputStream = file.getInputStream();
-        List<OutputStream> outputStreams = SplitterLabel.splitDocumentBySeparator(inputStream, separator);
-        StreamUtil.outputStreamsToResponseAsZip(outputStreams, response, "split_documents.zip");
+        OutputStream outputStream = ConverterXML.convertWordToWordXML(inputStream);
+
+        StreamUtil.outputStreamToResponse(
+            outputStream,
+            response,
+            "word2wordml.xml",
+            MimeTypeConstant.APPLICATION_XML
+        );
+    }
+
+    @ApiOperation(value = "wordml转word")
+    @ApiImplicitParams({ @ApiImplicitParam(name = "file", value = "源文件", required = true) })
+    @PostMapping("/wordml2word")
+    public void wordml2word(@RequestParam("file") MultipartFile file) throws Exception {
+        InputStream inputStream = file.getInputStream();
+        OutputStream outputStream = ConverterXML.convertWordXMLToWord(inputStream);
+
+        StreamUtil.outputStreamToResponse(
+            outputStream,
+            response,
+            "wordml2word.docx",
+            MimeTypeConstant.APPLICATION_MSWORD
+        );
     }
 }
