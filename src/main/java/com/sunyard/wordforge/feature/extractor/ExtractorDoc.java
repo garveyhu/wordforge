@@ -3,9 +3,9 @@ package com.sunyard.wordforge.feature.extractor;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.aspose.words.*;
+import com.sunyard.wordforge.complex.function.ThrowableFunction;
 import com.sunyard.wordforge.util.AsposeWordUtil;
 import java.io.InputStream;
-import java.util.*;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -21,15 +21,104 @@ public class ExtractorDoc {
      * @param file 源文档
      * @return 提取后的文档内容
      */
-    public static JSONObject extractFile(MultipartFile file) throws Exception {
-        InputStream inputStream = file.getInputStream();
-        String fileName = file.getOriginalFilename();
-        JSONArray data = extractWithTitle(inputStream, false);
-        JSONObject result = new JSONObject();
-        result.put("data", data);
-        result.put("file_name", fileName);
+    public static JSONObject extract0(MultipartFile file) throws Exception {
+        return extractContent(file, inputStream -> extractWithTitle(inputStream, false, false, true, true, true));
+    }
 
-        return result;
+    /**
+     * 提取文档内容
+     *
+     * @param file 源文档
+     * @return 提取后的文档内容
+     */
+    public static JSONObject extract1(MultipartFile file) throws Exception {
+        return extractContent(file, inputStream -> extractStructuredContent(inputStream, false, false, true, false, true));
+    }
+
+    /**
+     * 提取文档内容
+     *
+     * @param file 源文档
+     * @return 提取后的文档内容
+     */
+    public static JSONObject extract2(MultipartFile file) throws Exception {
+        return extractContent(file, inputStream -> extractStructuredContent(inputStream, false, true, false, false, true));
+    }
+
+    /**
+     * 提取文档内容的通用方法
+     *
+     * @param file          源文档
+     * @param dataExtractor 数据提取函数
+     * @return 提取后的文档内容
+     */
+    private static JSONObject extractContent(
+            MultipartFile file,
+            ThrowableFunction<InputStream, JSONArray> dataExtractor
+    )
+            throws Exception {
+        try (InputStream inputStream = file.getInputStream()) {
+            String fileName = file.getOriginalFilename();
+            JSONArray data = dataExtractor.apply(inputStream);
+            JSONObject result = new JSONObject();
+            result.put("data", data);
+            result.put("file_name", fileName);
+
+            return result;
+        }
+    }
+
+    /**
+     * 提取文档内容，保持内容的整体性
+     *
+     * @param inputStream             源文档输入流
+     * @param includeHeadingInContent 是否提取标题内容
+     * @return 提取后的文档内容
+     */
+    public static JSONArray extractStructuredContent(
+            InputStream inputStream,
+            boolean includeHeadingInContent,
+            boolean extractAsWholeParagraph,
+            boolean extractStyle,
+            boolean extractTitle,
+            boolean filterEmptyContent
+    )
+            throws Exception {
+        AsposeWordUtil.getInstance().registerLicense();
+        Document doc = new Document(inputStream);
+        JSONArray data = new JSONArray();
+
+        for (Section section : doc.getSections()) {
+            NodeCollection nodes = section.getBody().getChildNodes(NodeType.ANY, false);
+            for (Node node : (Iterable<Node>) nodes) {
+                if (node.getNodeType() == NodeType.PARAGRAPH) {
+                    Paragraph para = (Paragraph) node;
+                    if (!para.isInCell()) { // 如果段落不属于表格
+                        JSONObject paragraphInfo = extractParagraph(
+                                para,
+                                includeHeadingInContent,
+                                extractAsWholeParagraph,
+                                extractStyle,
+                                extractTitle,
+                                filterEmptyContent
+                        );
+                        if (paragraphInfo != null) {
+                            data.add(paragraphInfo);
+                        }
+                    }
+                } else if (node.getNodeType() == NodeType.TABLE) {
+                    Table table = (Table) node;
+                    JSONObject tableInfo = extractTable(table);
+                    if (tableInfo != null) {
+                        data.add(tableInfo);
+                    }
+                }
+            }
+        }
+
+        inputStream.close();
+
+        return data;
     }
 
     /**
@@ -39,7 +128,15 @@ public class ExtractorDoc {
      * @param includeHeadingInContent 是否提取标题内容
      * @return 提取后的文档内容
      */
-    public static JSONArray extractWithTitle(InputStream inputStream, boolean includeHeadingInContent) throws Exception {
+    public static JSONArray extractWithTitle(
+            InputStream inputStream,
+            boolean includeHeadingInContent,
+            boolean extractAsWholeParagraph,
+            boolean extractStyle,
+            boolean extractTitle,
+            boolean filterEmptyContent
+    )
+            throws Exception {
         AsposeWordUtil.getInstance().registerLicense();
         Document doc = new Document(inputStream);
         JSONArray data = new JSONArray();
@@ -54,7 +151,14 @@ public class ExtractorDoc {
                 }
 
                 // 提取段落内容和标题
-                JSONObject paragraphInfo = extractParagraph(para, includeHeadingInContent);
+                JSONObject paragraphInfo = extractParagraph(
+                        para,
+                        includeHeadingInContent,
+                        extractAsWholeParagraph,
+                        extractStyle,
+                        extractTitle,
+                        filterEmptyContent
+                );
                 if (paragraphInfo != null) {
                     data.add(paragraphInfo);
                 }
@@ -75,49 +179,97 @@ public class ExtractorDoc {
         return data;
     }
 
-
     /**
      * 提取段落内容
      *
      * @param paragraph               源段落
-     * @param includeHeadingInContent 是否提取标题内容
+     * @param includeHeadingInContent 是否包含标题内容
+     * @param extractAsWholeParagraph 是否作为整个段落提取
+     * @param extractStyle            是否提取样式
+     * @param extractTitle            是否提取标题
+     * @param filterEmptyContent      是否过滤空内容
      * @return 提取后的段落内容
      */
-    private static JSONObject extractParagraph(Paragraph paragraph, boolean includeHeadingInContent) {
-        if (paragraph.getChildNodes(NodeType.RUN, true).getCount() == 0) {
+    private static JSONObject extractParagraph(
+            Paragraph paragraph,
+            boolean includeHeadingInContent,
+            boolean extractAsWholeParagraph,
+            boolean extractStyle,
+            boolean extractTitle,
+            boolean filterEmptyContent
+    ) {
+        // 提取整个段落的内容
+        String paragraphText = paragraph.getText().trim();
+
+        // 如果设置了过滤空内容并且段落内容为空，则返回null
+        if (filterEmptyContent && paragraphText.isEmpty()) {
             return null;
         }
 
-        String title = findClosestHeading(paragraph);
         JSONObject paragraphInfo = new JSONObject();
-        paragraphInfo.put("title", title);
-        JSONArray content = new JSONArray();
+        if (extractTitle) {
+            String title = findClosestHeading(paragraph);
+            paragraphInfo.put("title", title);
+        }
+
+        // 如果不包含标题内容并且当前段落是标题，则返回空的内容
         if (!includeHeadingInContent && paragraph.getParagraphFormat().isHeading()) {
-            // 如果不包含标题内容并且当前段落是标题，则跳过内容提取
-            paragraphInfo.put("content", content);
+            paragraphInfo.put("content", extractAsWholeParagraph ? new JSONObject() : new JSONArray());
             return paragraphInfo;
         }
 
-        // 提取段落中的文本和样式
-        for (Run run : (Iterable<Run>) paragraph.getChildNodes(NodeType.RUN, true)) {
-            JSONObject textInfo = new JSONObject();
-            JSONObject style = new JSONObject();
-            style.put("bold", run.getFont().getBold());
-            style.put("italic", run.getFont().getItalic());
-            style.put("color", new int[]{
-                    run.getFont().getColor().getRed(),
-                    run.getFont().getColor().getGreen(),
-                    run.getFont().getColor().getBlue()
-            });
+        if (extractAsWholeParagraph) {
+            // 提取整个段落的内容
+            JSONObject content = new JSONObject();
+            if (extractStyle) {
+                Run firstRun = (Run) paragraph.getChildNodes(NodeType.RUN, true).get(0);
+                JSONObject style = extractStyle(firstRun);
+                content.put("style", style);
+            }
+            content.put("text", paragraphText);
+            paragraphInfo.put("content", content);
+        } else {
+            // 分段提取内容
+            JSONArray content = new JSONArray();
+            for (Run run : (Iterable<Run>) paragraph.getChildNodes(NodeType.RUN, true)) {
+                String runText = run.getText().trim();
+                if (filterEmptyContent && runText.isEmpty()) {
+                    continue; // 跳过空内容
+                }
 
-            textInfo.put("style", style);
-            textInfo.put("text", Collections.singletonList(run.getText()));
-
-            content.add(textInfo);
+                JSONObject textInfo = new JSONObject();
+                if (extractStyle) {
+                    JSONObject style = extractStyle(run);
+                    textInfo.put("style", style);
+                }
+                textInfo.put("text", runText);
+                content.add(textInfo);
+            }
+            paragraphInfo.put("content", content);
         }
 
-        paragraphInfo.put("content", content);
         return paragraphInfo;
+    }
+
+    /**
+     * 提取段落样式
+     *
+     * @param run 段落中的一个Run节点
+     * @return 提取的样式信息
+     */
+    private static JSONObject extractStyle(Run run) {
+        JSONObject style = new JSONObject();
+        style.put("bold", run.getFont().getBold());
+        style.put("italic", run.getFont().getItalic());
+        style.put(
+                "color",
+                new int[]{
+                        run.getFont().getColor().getRed(),
+                        run.getFont().getColor().getGreen(),
+                        run.getFont().getColor().getBlue()
+                }
+        );
+        return style;
     }
 
     /**
@@ -149,11 +301,14 @@ public class ExtractorDoc {
                         JSONObject style = new JSONObject();
                         style.put("bold", run.getFont().getBold());
                         style.put("italic", run.getFont().getItalic());
-                        style.put("color", new int[]{
-                                run.getFont().getColor().getRed(),
-                                run.getFont().getColor().getGreen(),
-                                run.getFont().getColor().getBlue()
-                        });
+                        style.put(
+                                "color",
+                                new int[]{
+                                        run.getFont().getColor().getRed(),
+                                        run.getFont().getColor().getGreen(),
+                                        run.getFont().getColor().getBlue()
+                                }
+                        );
 
                         cellStyleArray.add(style);
                         cellTextArray.add(run.getText());
@@ -202,5 +357,4 @@ public class ExtractorDoc {
         }
         return "";
     }
-
 }
