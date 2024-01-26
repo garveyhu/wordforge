@@ -20,7 +20,7 @@ class ConverterXMLTest {
     public void convertWordToWordXMLTest() throws Exception {
         String sourcePath = FileResourceConstant.ANIMATION_MOVIE;
         InputStream inputStream = StreamUtil.filePathToInputStream(sourcePath);
-        OutputStream outputStream = ConverterXML.convertWordToWordXML(inputStream);
+        OutputStream outputStream = ConverterXML.convertWordToWordML(inputStream);
         StreamUtil.outputStreamToFile(outputStream, FilePathConstant.OUTPUT, "word2xml.xml");
     }
 
@@ -28,7 +28,7 @@ class ConverterXMLTest {
     public void convertWordXMLToWordTest() throws Exception {
         String sourcePath = FileResourceConstant.ANIMATION_MOVIE_XML;
         InputStream inputStream = StreamUtil.filePathToInputStream(sourcePath);
-        OutputStream outputStream = ConverterXML.convertWordXMLToWord(inputStream);
+        OutputStream outputStream = ConverterXML.convertWordMLToWord(inputStream);
         StreamUtil.outputStreamToFile(outputStream, FilePathConstant.OUTPUT, "xml2word.docx");
     }
 }
