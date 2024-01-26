@@ -6,6 +6,8 @@ import com.aspose.words.*;
 import com.sunyard.wordforge.complex.function.ThrowableFunction;
 import com.sunyard.wordforge.util.AsposeWordUtil;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -108,10 +110,14 @@ public class ExtractorDoc {
                     }
                 } else if (node.getNodeType() == NodeType.TABLE) {
                     Table table = (Table) node;
-                    JSONObject tableInfo = extractTable(table);
-                    if (tableInfo != null) {
-                        data.add(tableInfo);
-                    }
+                    JSONObject tableInfo = extractTable(
+                            table,
+                            extractAsWholeParagraph,
+                            extractStyle,
+                            extractTitle,
+                            false
+                    );
+                    data.add(tableInfo);
                 }
             }
         }
@@ -167,10 +173,14 @@ public class ExtractorDoc {
             // 提取所有表格
             NodeCollection tables = section.getBody().getChildNodes(NodeType.TABLE, false);
             for (Table table : (Iterable<Table>) tables) {
-                JSONObject tableInfo = extractTable(table);
-                if (tableInfo != null) {
-                    data.add(tableInfo);
-                }
+                JSONObject tableInfo = extractTable(
+                        table,
+                        extractAsWholeParagraph,
+                        extractStyle,
+                        extractTitle,
+                        false
+                );
+                data.add(tableInfo);
             }
         }
 
@@ -206,17 +216,17 @@ public class ExtractorDoc {
             return null;
         }
 
+        // 如果不包含标题内容并且当前段落是标题，则返回空的内容
+        if (!includeHeadingInContent && paragraph.getParagraphFormat().isHeading()) {
+            return null;
+        }
+
         JSONObject paragraphInfo = new JSONObject();
         if (extractTitle) {
             String title = findClosestHeading(paragraph);
             paragraphInfo.put("title", title);
         }
 
-        // 如果不包含标题内容并且当前段落是标题，则返回空的内容
-        if (!includeHeadingInContent && paragraph.getParagraphFormat().isHeading()) {
-            paragraphInfo.put("content", extractAsWholeParagraph ? new JSONObject() : new JSONArray());
-            return paragraphInfo;
-        }
 
         if (extractAsWholeParagraph) {
             // 提取整个段落的内容
@@ -272,16 +282,19 @@ public class ExtractorDoc {
         return style;
     }
 
-    /**
-     * 提取表格内容
-     *
-     * @param table 源表格
-     * @return 提取后的表格内容
-     */
-    private static JSONObject extractTable(Table table) {
+    private static JSONObject extractTable(
+            Table table,
+            boolean extractAsWholeParagraph,
+            boolean extractStyle,
+            boolean extractTitle,
+            boolean filterEmptyContent
+    ) {
         JSONObject tableInfo = new JSONObject();
-        String title = findClosestHeading(table);
-        tableInfo.put("title", title);
+
+        if (extractTitle) {
+            String title = findClosestHeading(table);
+            tableInfo.put("title", title);
+        }
 
         JSONArray contentArray = new JSONArray();
         JSONObject tableContent = new JSONObject();
@@ -297,33 +310,59 @@ public class ExtractorDoc {
                 JSONArray cellStyleArray = new JSONArray();
 
                 for (Paragraph para : cell.getParagraphs()) {
-                    for (Run run : (Iterable<Run>) para.getChildNodes(NodeType.RUN, true)) {
-                        JSONObject style = new JSONObject();
-                        style.put("bold", run.getFont().getBold());
-                        style.put("italic", run.getFont().getItalic());
-                        style.put(
-                                "color",
-                                new int[]{
-                                        run.getFont().getColor().getRed(),
-                                        run.getFont().getColor().getGreen(),
-                                        run.getFont().getColor().getBlue()
-                                }
-                        );
+                    StringBuilder cellTextBuilder = new StringBuilder();
+                    JSONObject cellStyle = new JSONObject();
 
-                        cellStyleArray.add(style);
-                        cellTextArray.add(run.getText());
+                    for (Run run : (Iterable<Run>) para.getChildNodes(NodeType.RUN, true)) {
+                        if (extractStyle) {
+                            cellStyle.put("bold", run.getFont().getBold());
+                            cellStyle.put("italic", run.getFont().getItalic());
+                            cellStyle.put(
+                                    "color",
+                                    new int[]{
+                                            run.getFont().getColor().getRed(),
+                                            run.getFont().getColor().getGreen(),
+                                            run.getFont().getColor().getBlue()
+                                    }
+                            );
+                        }
+                        cellTextBuilder.append(run.getText());
+                    }
+
+                    cellTextArray.add(cellTextBuilder.toString().trim());
+                    if (!extractAsWholeParagraph) {
+                        cellStyleArray.add(cellStyle);
                     }
                 }
 
-                rowStyleData.add(cellStyleArray);
-                rowTextData.add(cellTextArray);
+                if (filterEmptyContent) {
+                    List<String> cellTextList = new ArrayList<>();
+                    for (Object text : cellTextArray) {
+                        if (text instanceof String) {
+                            cellTextList.add((String) text);
+                        }
+                    }
+                    if (cellTextList.isEmpty() || cellTextList.stream().allMatch(String::isEmpty)) {
+                        continue;
+                    }
+                }
+
+                if (extractAsWholeParagraph) {
+                    rowTextData.add(cellTextArray);
+                } else {
+                    rowStyleData.add(cellStyleArray);
+                }
             }
 
-            styleArray.add(rowStyleData);
+            if (extractStyle && !extractAsWholeParagraph) {
+                styleArray.add(rowStyleData);
+            }
             tableArray.add(rowTextData);
         }
 
-        tableContent.put("style", styleArray);
+        if (extractStyle && !extractAsWholeParagraph) {
+            tableContent.put("style", styleArray);
+        }
         tableContent.put("table", tableArray);
         contentArray.add(tableContent);
         tableInfo.put("content", contentArray);
