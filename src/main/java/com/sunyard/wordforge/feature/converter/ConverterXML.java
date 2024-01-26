@@ -7,36 +7,36 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
- * word转xml
+ * word wordml互转
  *
  * @author Archer
  */
 public class ConverterXML {
 
     /**
-     * Word转WordXML
+     * Word转WordML
      *
      * @param wordInputStream 源文件输入流
      * @return WordXML数据输出流
      */
-    public static OutputStream convertWordToWordXML(InputStream wordInputStream) throws Exception {
+    public static OutputStream convertWordToWordML(InputStream wordInputStream) throws Exception {
         AsposeWordUtil.getInstance().registerLicense();
         Document doc = new Document(wordInputStream);
-        OutputStream wordXMLOutputStream = new ByteArrayOutputStream();
-        doc.save(wordXMLOutputStream, SaveFormat.WORD_ML);
+        OutputStream wordMLOutputStream = new ByteArrayOutputStream();
+        doc.save(wordMLOutputStream, SaveFormat.WORD_ML);
 
-        return wordXMLOutputStream;
+        return wordMLOutputStream;
     }
 
     /**
-     * WordXML转Word
+     * WordML转Word
      *
-     * @param wordXMLInputStream 源文件输入流
+     * @param wordMLInputStream 源文件输入流
      * @return Word数据输出流
      */
-    public static OutputStream convertWordXMLToWord(InputStream wordXMLInputStream) throws Exception {
+    public static OutputStream convertWordMLToWord(InputStream wordMLInputStream) throws Exception {
         AsposeWordUtil.getInstance().registerLicense();
-        Document doc = new Document(wordXMLInputStream);
+        Document doc = new Document(wordMLInputStream);
         OutputStream wordOutputStream = new ByteArrayOutputStream();
         doc.save(wordOutputStream, SaveFormat.DOCX);
 

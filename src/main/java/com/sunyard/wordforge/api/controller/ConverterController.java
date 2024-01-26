@@ -48,7 +48,7 @@ public class ConverterController {
     @PostMapping("/word2wordml")
     public void word2wordml(@RequestParam("file") MultipartFile file) throws Exception {
         InputStream inputStream = file.getInputStream();
-        OutputStream outputStream = ConverterXML.convertWordToWordXML(inputStream);
+        OutputStream outputStream = ConverterXML.convertWordToWordML(inputStream);
 
         StreamUtil.outputStreamToResponse(
             outputStream,
@@ -63,7 +63,7 @@ public class ConverterController {
     @PostMapping("/wordml2word")
     public void wordml2word(@RequestParam("file") MultipartFile file) throws Exception {
         InputStream inputStream = file.getInputStream();
-        OutputStream outputStream = ConverterXML.convertWordXMLToWord(inputStream);
+        OutputStream outputStream = ConverterXML.convertWordMLToWord(inputStream);
 
         StreamUtil.outputStreamToResponse(
             outputStream,

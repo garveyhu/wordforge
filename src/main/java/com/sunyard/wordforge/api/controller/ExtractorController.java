@@ -26,7 +26,7 @@ public class ExtractorController {
 
     @ApiOperation(value = "提取文档内容")
     @ApiImplicitParams({ @ApiImplicitParam(name = "file", value = "源文件", required = true) })
-    @PostMapping("/file")
+    @PostMapping("/any")
     public ResultVO<?> extractFile(@RequestParam("file") MultipartFile file) throws Exception {
         JSONObject jsonObject = ExtractorDoc.extractFile(file);
         return ResultVO.ok(jsonObject);
