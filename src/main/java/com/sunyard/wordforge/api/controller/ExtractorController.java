@@ -3,7 +3,7 @@ package com.sunyard.wordforge.api.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.sunyard.wordforge.complex.constant.FilePathConstant;
 import com.sunyard.wordforge.complex.vo.ResultVO;
-import com.sunyard.wordforge.feature.extractor.ExtractRender;
+import com.sunyard.wordforge.feature.extractor.ExtractorRender;
 import com.sunyard.wordforge.feature.extractor.ExtractorDoc;
 import com.sunyard.wordforge.util.StreamUtil;
 import io.swagger.annotations.Api;
@@ -57,7 +57,7 @@ public class ExtractorController {
     @PostMapping("/render")
     public ResultVO<?> renderFile(@RequestParam("json") String json) throws Exception {
         JSONObject jsonObject = JSONObject.parseObject(json);
-        OutputStream outputStream = ExtractRender.renderJsonToWord(jsonObject);
+        OutputStream outputStream = ExtractorRender.renderJsonToWord(jsonObject);
 
         StreamUtil.outputStreamToFile(
             outputStream,

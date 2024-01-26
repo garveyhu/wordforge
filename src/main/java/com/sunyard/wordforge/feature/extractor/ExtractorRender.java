@@ -9,9 +9,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 
 /**
+ * 解析渲染
+ *
  * @author Archer
  */
-public class ExtractRender {
+public class ExtractorRender {
 
     public static OutputStream renderJsonToWord(JSONObject jsonObject) throws Exception {
         Document doc = new Document();
