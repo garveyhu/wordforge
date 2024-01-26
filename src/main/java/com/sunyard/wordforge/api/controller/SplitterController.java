@@ -33,14 +33,14 @@ public class SplitterController {
 
     @ApiOperation(value = "分隔符切分")
     @ApiImplicitParams(
-            {
-                    @ApiImplicitParam(name = "file", value = "源文件", required = true),
-                    @ApiImplicitParam(name = "separator", value = "分隔符", required = true, example = "§")
-            }
+        {
+            @ApiImplicitParam(name = "file", value = "源文件", required = true),
+            @ApiImplicitParam(name = "separator", value = "分隔符", required = true, example = "§")
+        }
     )
     @PostMapping("/separator")
     public void split(@RequestParam("file") MultipartFile file, @RequestParam("separator") String separator)
-            throws IOException {
+        throws IOException {
         InputStream inputStream = file.getInputStream();
         List<OutputStream> outputStreams = SplitterLabel.splitDocumentBySeparator(inputStream, separator);
         StreamUtil.outputStreamsToResponseAsZip(outputStreams, response, "split_documents.zip");

@@ -20,5 +20,4 @@ public class MimeTypeConstant {
     public static final String TEXT_CSV = "text/csv";
     public static final String IMAGE_JPEG = "image/jpeg";
     public static final String IMAGE_PNG = "image/png";
-
 }

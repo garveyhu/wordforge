@@ -35,12 +35,7 @@ public class ConverterController {
         InputStream inputStream = file.getInputStream();
         OutputStream outputStream = ConverterPDF.wordToPdf(inputStream);
 
-        StreamUtil.outputStreamToResponse(
-            outputStream,
-            response,
-            "word2pdf.pdf",
-            MimeTypeConstant.APPLICATION_PDF
-        );
+        StreamUtil.outputStreamToResponse(outputStream, response, "word2pdf.pdf", MimeTypeConstant.APPLICATION_PDF);
     }
 
     @ApiOperation(value = "word转wordml")
@@ -50,12 +45,7 @@ public class ConverterController {
         InputStream inputStream = file.getInputStream();
         OutputStream outputStream = ConverterXML.convertWordToWordML(inputStream);
 
-        StreamUtil.outputStreamToResponse(
-            outputStream,
-            response,
-            "word2wordml.xml",
-            MimeTypeConstant.APPLICATION_XML
-        );
+        StreamUtil.outputStreamToResponse(outputStream, response, "word2wordml.xml", MimeTypeConstant.APPLICATION_XML);
     }
 
     @ApiOperation(value = "wordml转word")

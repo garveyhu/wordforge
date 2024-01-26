@@ -106,9 +106,9 @@ public class StreamUtil {
         throws IOException {
         setResponseHeaders(response, fileName, contentType);
         if (outputStream instanceof ByteArrayOutputStream) {
-            OutputStream os = response.getOutputStream();
-            os.write(((ByteArrayOutputStream) outputStream).toByteArray());
-//            StreamUtil.outputStreamToFile(outputStream, FilePathConstant.OUTPUT, "word2pdf1111.pdf");
+            byte[] data = ((ByteArrayOutputStream) outputStream).toByteArray();
+            response.addHeader("Content-Length", String.valueOf(data.length));
+            response.getOutputStream().write(data);
         }
     }
 

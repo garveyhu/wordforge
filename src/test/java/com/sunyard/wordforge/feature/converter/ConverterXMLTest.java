@@ -22,7 +22,6 @@ class ConverterXMLTest {
         InputStream inputStream = StreamUtil.filePathToInputStream(sourcePath);
         OutputStream outputStream = ConverterXML.convertWordToWordXML(inputStream);
         StreamUtil.outputStreamToFile(outputStream, FilePathConstant.OUTPUT, "word2xml.xml");
-
     }
 
     @Test
