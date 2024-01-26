@@ -262,26 +262,15 @@ public class ExtractorDoc {
     }
 
     /**
-     * 提取段落样式
+     * 提取表格内容
      *
-     * @param run 段落中的一个Run节点
-     * @return 提取的样式信息
+     * @param table                   源表格
+     * @param extractAsWholeParagraph 是否作为整个段落提取
+     * @param extractStyle            是否提取样式
+     * @param extractTitle            是否提取标题
+     * @param filterEmptyContent      是否过滤空内容
+     * @return 提取后的表格内容
      */
-    private static JSONObject extractStyle(Run run) {
-        JSONObject style = new JSONObject();
-        style.put("bold", run.getFont().getBold());
-        style.put("italic", run.getFont().getItalic());
-        style.put(
-                "color",
-                new int[]{
-                        run.getFont().getColor().getRed(),
-                        run.getFont().getColor().getGreen(),
-                        run.getFont().getColor().getBlue()
-                }
-        );
-        return style;
-    }
-
     private static JSONObject extractTable(
             Table table,
             boolean extractAsWholeParagraph,
@@ -311,27 +300,18 @@ public class ExtractorDoc {
 
                 for (Paragraph para : cell.getParagraphs()) {
                     StringBuilder cellTextBuilder = new StringBuilder();
-                    JSONObject cellStyle = new JSONObject();
 
                     for (Run run : (Iterable<Run>) para.getChildNodes(NodeType.RUN, true)) {
                         if (extractStyle) {
-                            cellStyle.put("bold", run.getFont().getBold());
-                            cellStyle.put("italic", run.getFont().getItalic());
-                            cellStyle.put(
-                                    "color",
-                                    new int[]{
-                                            run.getFont().getColor().getRed(),
-                                            run.getFont().getColor().getGreen(),
-                                            run.getFont().getColor().getBlue()
-                                    }
-                            );
+                            JSONObject style = extractStyle(run);
+                            cellStyleArray.add(style);
                         }
                         cellTextBuilder.append(run.getText());
                     }
 
                     cellTextArray.add(cellTextBuilder.toString().trim());
                     if (!extractAsWholeParagraph) {
-                        cellStyleArray.add(cellStyle);
+                        rowStyleData.add(cellStyleArray);
                     }
                 }
 
@@ -368,6 +348,45 @@ public class ExtractorDoc {
         tableInfo.put("content", contentArray);
 
         return tableInfo;
+    }
+
+    /**
+     * 提取样式
+     *
+     * @param run 源文本
+     * @return 提取后的样式
+     */
+    private static JSONObject extractStyle(Run run) {
+        JSONObject style = new JSONObject();
+        style.put("bold", run.getFont().getBold());
+        style.put("italic", run.getFont().getItalic());
+        style.put("strike", run.getFont().getStrikeThrough());
+        style.put("subscript", run.getFont().getSubscript());
+        style.put("superscript", run.getFont().getSuperscript());
+        style.put("underline", run.getFont().getUnderline());
+        style.put("font-name", run.getFont().getName());
+        style.put("font-size", run.getFont().getSize());
+        style.put("highlight", run.getFont().getHighlightColor() != null);
+        style.put("highlight-color", run.getFont().getHighlightColor() != null ? run.getFont().getHighlightColor().getRGB() : -2);
+        style.put("hyperlink", run.getParentParagraph().getParagraphFormat().getStyleIdentifier() == StyleIdentifier.HYPERLINK);
+        style.put(
+                "color",
+                new int[] {
+                        run.getFont().getColor().getRed(),
+                        run.getFont().getColor().getGreen(),
+                        run.getFont().getColor().getBlue()
+                }
+        );
+        style.put("alignment", run.getParentParagraph().getParagraphFormat().getAlignment());
+
+        // 处理列表编号（如果存在）
+        if (run.getParentParagraph().isListItem()) {
+            style.put("list-number", run.getParentParagraph().getListFormat().getListLevelNumber());
+        } else {
+            style.put("list-number", -1);
+        }
+
+        return style;
     }
 
     /**
