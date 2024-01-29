@@ -26,7 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/extractor")
 public class ExtractorController {
 
-    @ApiOperation(value = "提取文档内容（按照段落）)")
+    @ApiOperation(value = "提取文档内容（按照段落）")
     @ApiImplicitParams(
         {
             @ApiImplicitParam(name = "file", value = "源文件", dataType = "__file", required = true),
