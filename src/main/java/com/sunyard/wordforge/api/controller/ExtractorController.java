@@ -26,7 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/extractor")
 public class ExtractorController {
 
-    @ApiOperation(value = "提取文档内容v0")
+    @ApiOperation(value = "提取文档内容（按照段落）)")
     @ApiImplicitParams(
         {
             @ApiImplicitParam(name = "file", value = "源文件", dataType = "__file", required = true),
@@ -46,13 +46,13 @@ public class ExtractorController {
         }
     )
     @PostMapping("/extract/v0")
-    public ResultVO<?> extractM0(@RequestParam("file") MultipartFile file, @ModelAttribute ExtractionOptions options)
+    public ResultVO<?> extractV0(@RequestParam("file") MultipartFile file, @ModelAttribute ExtractionOptions options)
         throws Exception {
         JSONObject jsonObject = ExtractorDoc.extract0(file, options);
         return ResultVO.ok(jsonObject);
     }
 
-    @ApiOperation(value = "提取文档内容v1")
+    @ApiOperation(value = "提取文档内容（按照标题级别）")
     @ApiImplicitParams(
         {
             @ApiImplicitParam(name = "file", value = "源文件", dataType = "__file", required = true),
@@ -61,9 +61,26 @@ public class ExtractorController {
                 value = "是否提取标题作为内容（默认false）",
                 dataType = "boolean"
             ),
+            @ApiImplicitParam(name = "extractStyle", value = "是否提取样式（默认false）", dataType = "boolean"),
+            @ApiImplicitParam(name = "extractTitle", value = "是否提取标题（默认false）", dataType = "boolean"),
+            @ApiImplicitParam(name = "filterEmptyContent", value = "是否过滤空内容（默认true）", dataType = "boolean")
+        }
+    )
+    @PostMapping("/extract/v1")
+    public ResultVO<?> extractV1(@RequestParam("file") MultipartFile file, @ModelAttribute ExtractionOptions options)
+        throws Exception {
+        JSONObject jsonObject = ExtractorDoc.extract1(file, options);
+        return ResultVO.ok(jsonObject);
+    }
+
+    @ApiOperation(value = "提取文档内容（按照分隔符）")
+    @ApiImplicitParams(
+        {
+            @ApiImplicitParam(name = "file", value = "源文件", dataType = "__file", required = true),
+            @ApiImplicitParam(name = "delimiter", value = "内容分隔符（默认§）", dataType = "string"),
             @ApiImplicitParam(
-                name = "extractAsWholeParagraph",
-                value = "是否作为整个段落提取（默认true）",
+                name = "includeHeadingInContent",
+                value = "是否提取标题作为内容（默认false）",
                 dataType = "boolean"
             ),
             @ApiImplicitParam(name = "extractStyle", value = "是否提取样式（默认false）", dataType = "boolean"),
@@ -71,10 +88,14 @@ public class ExtractorController {
             @ApiImplicitParam(name = "filterEmptyContent", value = "是否过滤空内容（默认true）", dataType = "boolean")
         }
     )
-    @PostMapping("/extract/v1")
-    public ResultVO<?> extractM1(@RequestParam("file") MultipartFile file, @ModelAttribute ExtractionOptions options)
+    @PostMapping("/extract/v2")
+    public ResultVO<?> extractV2(
+        @RequestParam("file") MultipartFile file,
+        @ModelAttribute ExtractionOptions options,
+        @RequestParam(value = "delimiter", defaultValue = "§") String delimiter
+    )
         throws Exception {
-        JSONObject jsonObject = ExtractorDoc.extract1(file, options);
+        JSONObject jsonObject = ExtractorDoc.extract2(file, options, delimiter);
         return ResultVO.ok(jsonObject);
     }
 
