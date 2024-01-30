@@ -1,0 +1,47 @@
+package com.sunyard.wordforge.feature.contents;
+
+import com.aspose.words.*;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.ByteArrayOutputStream;
+
+/**
+ * 目录操作内容操作
+ *
+ * @author Archer
+ */
+public class ContentsOperation {
+
+    /**
+     * 生成包含目录的文档
+     *
+     * @param inputStream 输入流，源文档
+     * @return 包含目录的文档的输出流
+     */
+    public static OutputStream generateTableOfContents(InputStream inputStream) throws Exception {
+        // 从输入流加载文档
+        Document doc = new Document(inputStream);
+
+        // 创建 DocumentBuilder，用于在文档中插入元素
+        DocumentBuilder builder = new DocumentBuilder(doc);
+
+        // 将光标移动到文档的开头
+        builder.moveToDocumentStart();
+
+        // 插入目录
+        builder.insertTableOfContents("\\o \"1-3\" \\h \\z \\u");
+        // 参数定义目录的格式和行为
+
+        // 更新目录（可能需要两次更新才能正确显示页码）
+        doc.updateFields();
+        doc.updatePageLayout();
+
+        // 创建一个 ByteArrayOutputStream 以将文档写入输出流
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        // 将文档保存到输出流中
+        doc.save(outputStream, SaveFormat.DOCX);
+
+        // 返回包含文档的输出流
+        return outputStream;
+    }
+}

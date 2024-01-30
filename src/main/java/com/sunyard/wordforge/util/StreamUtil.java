@@ -6,6 +6,8 @@ import java.io.*;
 import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -43,7 +45,7 @@ public class StreamUtil {
      */
     public static void outputStreamToFile(OutputStream outputStream, String destinationDirectory, String fileName) {
         if (fileName == null || fileName.trim().isEmpty()) {
-            fileName = generateUniqueFileName();
+            fileName = generateUniqueFileName() + ".docx";
         }
 
         File directory = new File(destinationDirectory);
@@ -83,7 +85,7 @@ public class StreamUtil {
 
         for (int i = 0; i < outputStreams.size(); i++) {
             String fileName = (fileNames == null || fileNames.get(i) == null || fileNames.get(i).trim().isEmpty())
-                ? generateUniqueFileName()
+                ? i + generateUniqueFileName() + ".docx"
                 : fileNames.get(i);
             outputStreamToFile(outputStreams.get(i), destinationDirectory, fileName);
         }
@@ -161,6 +163,22 @@ public class StreamUtil {
      * @return 唯一的文件名
      */
     private static String generateUniqueFileName() {
-        return Instant.now().getEpochSecond() + "_" + UUID.randomUUID();
+        String source = Instant.now().getEpochSecond() + "_" + UUID.randomUUID();
+        MessageDigest digest = null;
+        try {
+            digest = MessageDigest.getInstance("SHA-1");
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+        byte[] result = digest.digest(source.getBytes());
+        StringBuilder hexString = new StringBuilder();
+
+        for (int i = 0; i < result.length && i < 5; ++i) { // Use first 5 bytes (40 bits, 10 hex chars)
+            String hex = Integer.toHexString(0xff & result[i]);
+            if(hex.length() == 1) hexString.append('0');
+            hexString.append(hex);
+        }
+
+        return hexString.toString();
     }
 }

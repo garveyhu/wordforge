@@ -1,6 +1,7 @@
 package com.sunyard.wordforge.api.controller;
 
 import com.sunyard.wordforge.feature.splitter.SplitterLabel;
+import com.sunyard.wordforge.feature.splitter.SplitterPage;
 import com.sunyard.wordforge.util.StreamUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -43,6 +44,32 @@ public class SplitterController {
         throws IOException {
         InputStream inputStream = file.getInputStream();
         List<OutputStream> outputStreams = SplitterLabel.splitDocumentBySeparator(inputStream, separator);
+        StreamUtil.outputStreamsToResponseAsZip(outputStreams, response, "split_documents.zip");
+    }
+
+    @ApiOperation(value = "页码切分（单页）")
+    @ApiImplicitParams(
+        {
+            @ApiImplicitParam(name = "file", value = "源文件", required = true)
+        }
+    )
+    @PostMapping("/page/single")
+    public void splitSingle(@RequestParam("file") MultipartFile file) throws Exception {
+        InputStream inputStream = file.getInputStream();
+        List<OutputStream> outputStreams = SplitterPage.splitDocumentByPage(inputStream);
+        StreamUtil.outputStreamsToResponseAsZip(outputStreams, response, "split_documents.zip");
+    }
+
+    @ApiOperation(value = "页码切分（奇偶页）")
+    @ApiImplicitParams(
+        {
+            @ApiImplicitParam(name = "file", value = "源文件", required = true)
+        }
+    )
+    @PostMapping("/page/odd-even")
+    public void splitOddEven(@RequestParam("file") MultipartFile file) throws Exception {
+        InputStream inputStream = file.getInputStream();
+        List<OutputStream> outputStreams = SplitterPage.splitDocumentByOddEvenPages(inputStream);
         StreamUtil.outputStreamsToResponseAsZip(outputStreams, response, "split_documents.zip");
     }
 }
