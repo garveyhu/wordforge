@@ -2,6 +2,7 @@ package com.sunyard.wordforge.feature.extractor;
 
 import com.alibaba.fastjson.JSONObject;
 import com.aspose.words.*;
+import java.util.Optional;
 
 /**
  * 提取公共类
@@ -18,38 +19,42 @@ public class ExtractorCommon {
      */
     public static JSONObject extractStyle(Run run) {
         JSONObject style = new JSONObject();
-        style.put("bold", run.getFont().getBold());
-        style.put("italic", run.getFont().getItalic());
-        style.put("strike", run.getFont().getStrikeThrough());
-        style.put("subscript", run.getFont().getSubscript());
-        style.put("superscript", run.getFont().getSuperscript());
-        style.put("underline", run.getFont().getUnderline());
-        style.put("font-name", run.getFont().getName());
-        style.put("font-size", run.getFont().getSize());
-        style.put("highlight", run.getFont().getHighlightColor() != null);
-        style.put(
-            "highlight-color",
-            run.getFont().getHighlightColor() != null ? run.getFont().getHighlightColor().getRGB() : -2
-        );
-        style.put(
-            "hyperlink",
-            run.getParentParagraph().getParagraphFormat().getStyleIdentifier() == StyleIdentifier.HYPERLINK
-        );
-        style.put(
-            "color",
-            new int[] {
-                run.getFont().getColor().getRed(),
-                run.getFont().getColor().getGreen(),
-                run.getFont().getColor().getBlue()
-            }
-        );
-        style.put("alignment", run.getParentParagraph().getParagraphFormat().getAlignment());
 
-        // 处理列表编号（如果存在）
-        if (run.getParentParagraph().isListItem()) {
-            style.put("list-number", run.getParentParagraph().getListFormat().getListLevelNumber());
-        } else {
-            style.put("list-number", -1);
+        if (run == null) {
+            // 如果 Run 对象为 null，则直接返回空的样式对象
+            return style;
+        }
+
+        Font font = run.getFont();
+        if (font != null) {
+            // 安全地检查并设置样式属性
+            style.put("bold", Optional.of(font.getBold()).orElse(false));
+            style.put("italic", Optional.of(font.getItalic()).orElse(false));
+            style.put("strike", Optional.of(font.getStrikeThrough()).orElse(false));
+            style.put("subscript", Optional.of(font.getSubscript()).orElse(false));
+            style.put("superscript", Optional.of(font.getSuperscript()).orElse(false));
+            style.put("underline", Optional.of(font.getUnderline()).orElse(com.aspose.words.Underline.NONE));
+            style.put("font-name", Optional.of(font.getName()).orElse(""));
+            style.put("font-size", Optional.of(font.getSize()).orElse(12.0));
+            style.put("highlight", font.getHighlightColor() != null);
+            style.put("highlight-color", font.getHighlightColor() != null ? font.getHighlightColor().getRGB() : -2);
+            style.put("hyperlink", run.getParentParagraph().getParagraphFormat().getStyleIdentifier() == StyleIdentifier.HYPERLINK);
+            style.put("color", new int[]{
+                    font.getColor().getRed(),
+                    font.getColor().getGreen(),
+                    font.getColor().getBlue()
+            });
+        }
+
+        // 对于对齐方式和列表编号的处理，需考虑到Paragraph的存在性
+        Paragraph paragraph = run.getParentParagraph();
+        if (paragraph != null) {
+            style.put("alignment", paragraph.getParagraphFormat().getAlignment());
+            if (paragraph.isListItem()) {
+                style.put("list-number", paragraph.getListFormat().getListLevelNumber());
+            } else {
+                style.put("list-number", -1);
+            }
         }
 
         return style;
