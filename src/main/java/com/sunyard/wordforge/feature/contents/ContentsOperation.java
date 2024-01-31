@@ -56,45 +56,27 @@ public class ContentsOperation {
     public static OutputStream removeTableOfContents(InputStream inputStream) throws Exception {
         Document doc = new Document(inputStream);
 
+        // 查找所有TOC字段
+        NodeCollection<FieldStart> fieldStarts = doc.getChildNodes(NodeType.FIELD_START, true);
         List<FieldStart> tocFieldStarts = new ArrayList<>();
-        List<Node> nodesToRemove = new ArrayList<>();
 
-        // 找到所有 TOC 字段的开始部分
-        for (FieldStart start : (Iterable<FieldStart>) doc.getChildNodes(NodeType.FIELD_START, true)) {
-            if (start.getFieldType() == FieldType.FIELD_TOC) {
-                tocFieldStarts.add(start);
+        for (FieldStart fieldStart : fieldStarts) {
+            if (fieldStart.getFieldType() == FieldType.FIELD_TOC) {
+                tocFieldStarts.add(fieldStart);
             }
         }
 
-        // 遍历每个 TOC 字段，收集要删除的节点
-        for (FieldStart start : tocFieldStarts) {
-            Node currentNode = start;
-            nodesToRemove.add(currentNode);
-            while (currentNode != null && currentNode.getNodeType() != NodeType.FIELD_END) {
-                currentNode = currentNode.nextPreOrder(doc);
-
-                // 对于每个 TOC 字段，我们在遇到 FieldEnd 之前添加所有节点
-                if (currentNode != null && currentNode.getNodeType() == NodeType.FIELD_END) {
-                    FieldEnd end = (FieldEnd) currentNode;
-                    if (end.getFieldType() == FieldType.FIELD_TOC) {
-                        nodesToRemove.add(currentNode);
-                        break; // 结束当前 TOC 字段的处理
-                    }
-                }
-
-                nodesToRemove.add(currentNode);
-            }
+        // 完全删除TOC字段
+        for (FieldStart fieldStart : tocFieldStarts) {
+            Field field = fieldStart.getField();
+            field.remove();
         }
 
-        // 删除收集到的所有节点
-        for (Node node : nodesToRemove) {
-            node.remove();
-        }
-
-        // 更新目录后的文档布局
+        // 更新文档以反映更改
         doc.updatePageLayout();
+        doc.updateFields();
 
-        // 将修改后的文档保存到输出流并返回
+        // 保存更改到新的OutputStream
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         doc.save(outputStream, SaveFormat.DOCX);
 
