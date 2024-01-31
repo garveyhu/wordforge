@@ -10,6 +10,11 @@ import java.io.OutputStream;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
+/**
+ * 页码拆分
+ *
+ * @author Archer
+ */
 class SplitterPageTest {
 
     @Test

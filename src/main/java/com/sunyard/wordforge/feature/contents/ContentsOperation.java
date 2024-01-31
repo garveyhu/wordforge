@@ -4,6 +4,8 @@ import com.aspose.words.*;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 目录操作内容操作
@@ -42,6 +44,60 @@ public class ContentsOperation {
         doc.save(outputStream, SaveFormat.DOCX);
 
         // 返回包含文档的输出流
+        return outputStream;
+    }
+
+    /**
+     * 删除包含目录的文档中的目录
+     *
+     * @param inputStream 输入流，包含目录的文档
+     * @return 不包含目录的文档的输出流
+     */
+    public static OutputStream removeTableOfContents(InputStream inputStream) throws Exception {
+        Document doc = new Document(inputStream);
+
+        List<FieldStart> tocFieldStarts = new ArrayList<>();
+        List<Node> nodesToRemove = new ArrayList<>();
+
+        // 找到所有 TOC 字段的开始部分
+        for (FieldStart start : (Iterable<FieldStart>) doc.getChildNodes(NodeType.FIELD_START, true)) {
+            if (start.getFieldType() == FieldType.FIELD_TOC) {
+                tocFieldStarts.add(start);
+            }
+        }
+
+        // 遍历每个 TOC 字段，收集要删除的节点
+        for (FieldStart start : tocFieldStarts) {
+            Node currentNode = start;
+            nodesToRemove.add(currentNode);
+            while (currentNode != null && currentNode.getNodeType() != NodeType.FIELD_END) {
+                currentNode = currentNode.nextPreOrder(doc);
+
+                // 对于每个 TOC 字段，我们在遇到 FieldEnd 之前添加所有节点
+                if (currentNode != null && currentNode.getNodeType() == NodeType.FIELD_END) {
+                    FieldEnd end = (FieldEnd) currentNode;
+                    if (end.getFieldType() == FieldType.FIELD_TOC) {
+                        nodesToRemove.add(currentNode);
+                        break; // 结束当前 TOC 字段的处理
+                    }
+                }
+
+                nodesToRemove.add(currentNode);
+            }
+        }
+
+        // 删除收集到的所有节点
+        for (Node node : nodesToRemove) {
+            node.remove();
+        }
+
+        // 更新目录后的文档布局
+        doc.updatePageLayout();
+
+        // 将修改后的文档保存到输出流并返回
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        doc.save(outputStream, SaveFormat.DOCX);
+
         return outputStream;
     }
 }

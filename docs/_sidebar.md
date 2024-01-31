@@ -2,6 +2,6 @@
     - [快速开始](/)
 
 - 功能
-    - [转换](converter.md)
-    - [提取](extractor.md)
-    - [分割](splitter.md)
+    - [转换](feature/converter)
+    - [提取](feature/extractor)
+    - [拆分](feature/splitter)

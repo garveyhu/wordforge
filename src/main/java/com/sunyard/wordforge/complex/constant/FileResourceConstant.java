@@ -13,4 +13,6 @@ public class FileResourceConstant {
     public static final String ANIMATION_MOVIE = "C:\\Users\\lenovo\\Downloads\\aspose\\doc\\动画电影赏析.docx";
 
     public static final String ANIMATION_MOVIE_XML = "C:\\Users\\lenovo\\Downloads\\aspose\\doc\\动画电影赏析.xml";
+
+    public static final String CONTENTS_DOC = "C:\\Users\\lenovo\\Downloads\\aspose\\doc\\contents.docx";
 }

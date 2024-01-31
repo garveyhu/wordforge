@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.sunyard.wordforge.complex.constant.FilePathConstant;
 import com.sunyard.wordforge.complex.constant.FileResourceConstant;
+import com.sunyard.wordforge.util.AsposeWordUtil;
 import com.sunyard.wordforge.util.StreamUtil;
 import java.io.OutputStream;
 import java.util.List;
@@ -18,6 +19,7 @@ class SplitterLabelTest {
 
     @Test
     void splitDocumentBySeparatorTest() {
+        AsposeWordUtil.getInstance().registerLicense();
         String sourcePath = FileResourceConstant.SPLITTER_LABEL;
         List<OutputStream> outputStreams = SplitterLabel.splitDocumentBySeparator(
             StreamUtil.filePathToInputStream(sourcePath),

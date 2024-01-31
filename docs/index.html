@@ -12,18 +12,28 @@
   <div id="app"></div>
   <script>
     window.$docsify = {
+      repo: 'https://github.com/garveyhu/wordforge',
+      coverpage: true,
       loadSidebar: true,
       subMaxLevel: 2,
-      coverpage: true,
+      loadNavbar: true,
       search: {
         placeholder: 'Type to search',
-      }
+      },
+      footer: {
+        copy: '<span>wordforge &copy; 2024</span>',
+        auth: 'Archer',
+        pre: '<hr/>',
+        style: 'text-align: right;',
+        class: 'className',
+      },
     }
   </script>
   <!-- Docsify v4 -->
   <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-java.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
+  <script src="//unpkg.com/docsify-footer-enh/dist/docsify-footer-enh.min.js"></script>
 </body>
 </html>

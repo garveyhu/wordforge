@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.sunyard.wordforge.complex.constant.FilePathConstant;
 import com.sunyard.wordforge.complex.constant.FileResourceConstant;
+import com.sunyard.wordforge.util.AsposeWordUtil;
 import com.sunyard.wordforge.util.StreamUtil;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -18,6 +19,7 @@ class ConverterXMLTest {
 
     @Test
     public void convertWordToWordXMLTest() throws Exception {
+        AsposeWordUtil.getInstance().registerLicense();
         String sourcePath = FileResourceConstant.ANIMATION_MOVIE;
         InputStream inputStream = StreamUtil.filePathToInputStream(sourcePath);
         OutputStream outputStream = ConverterXML.convertWordToWordML(inputStream);
@@ -26,6 +28,7 @@ class ConverterXMLTest {
 
     @Test
     public void convertWordXMLToWordTest() throws Exception {
+        AsposeWordUtil.getInstance().registerLicense();
         String sourcePath = FileResourceConstant.ANIMATION_MOVIE_XML;
         InputStream inputStream = StreamUtil.filePathToInputStream(sourcePath);
         OutputStream outputStream = ConverterXML.convertWordMLToWord(inputStream);
