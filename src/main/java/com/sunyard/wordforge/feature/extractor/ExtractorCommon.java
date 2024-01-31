@@ -38,12 +38,14 @@ public class ExtractorCommon {
             style.put("font-size", Optional.of(font.getSize()).orElse(12.0));
             style.put("highlight", font.getHighlightColor() != null);
             style.put("highlight-color", font.getHighlightColor() != null ? font.getHighlightColor().getRGB() : -2);
-            style.put("hyperlink", run.getParentParagraph().getParagraphFormat().getStyleIdentifier() == StyleIdentifier.HYPERLINK);
-            style.put("color", new int[]{
-                    font.getColor().getRed(),
-                    font.getColor().getGreen(),
-                    font.getColor().getBlue()
-            });
+            style.put(
+                "hyperlink",
+                run.getParentParagraph().getParagraphFormat().getStyleIdentifier() == StyleIdentifier.HYPERLINK
+            );
+            style.put(
+                "color",
+                new int[] { font.getColor().getRed(), font.getColor().getGreen(), font.getColor().getBlue() }
+            );
         }
 
         // 对于对齐方式和列表编号的处理，需考虑到Paragraph的存在性

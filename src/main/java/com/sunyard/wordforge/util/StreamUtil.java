@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
@@ -34,6 +35,25 @@ public class StreamUtil {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * 将多个文件绝对路径转换为输入流集合
+     *
+     * @param filePaths 文件的绝对路径集合
+     * @return 输入流集合
+     */
+    public static List<InputStream> filePathsToInputStreams(List<String> filePaths) {
+        List<InputStream> inputStreams = new ArrayList<>();
+        for (String filePath : filePaths) {
+            try {
+                InputStream inputStream = Files.newInputStream(Paths.get(filePath));
+                inputStreams.add(inputStream);
+            } catch (IOException e) {
+                throw new RuntimeException("Error opening file: " + filePath, e);
+            }
+        }
+        return inputStreams;
     }
 
     /**
@@ -175,7 +195,7 @@ public class StreamUtil {
 
         for (int i = 0; i < result.length && i < 5; ++i) { // Use first 5 bytes (40 bits, 10 hex chars)
             String hex = Integer.toHexString(0xff & result[i]);
-            if(hex.length() == 1) hexString.append('0');
+            if (hex.length() == 1) hexString.append('0');
             hexString.append(hex);
         }
 

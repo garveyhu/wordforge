@@ -2,7 +2,6 @@ package com.sunyard.wordforge.feature.splitter;
 
 import com.aspose.words.Document;
 import com.aspose.words.SaveFormat;
-
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -58,7 +57,10 @@ public class SplitterPage {
             if (page % 2 == 1) {
                 oddPagesDocument.appendDocument(pageDocument, com.aspose.words.ImportFormatMode.KEEP_SOURCE_FORMATTING);
             } else {
-                evenPagesDocument.appendDocument(pageDocument, com.aspose.words.ImportFormatMode.KEEP_SOURCE_FORMATTING);
+                evenPagesDocument.appendDocument(
+                    pageDocument,
+                    com.aspose.words.ImportFormatMode.KEEP_SOURCE_FORMATTING
+                );
             }
         }
 

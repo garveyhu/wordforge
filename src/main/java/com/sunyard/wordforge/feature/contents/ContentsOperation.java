@@ -1,9 +1,9 @@
 package com.sunyard.wordforge.feature.contents;
 
 import com.aspose.words.*;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 

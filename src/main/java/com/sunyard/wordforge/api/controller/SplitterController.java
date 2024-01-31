@@ -48,11 +48,7 @@ public class SplitterController {
     }
 
     @ApiOperation(value = "页码切分（单页）")
-    @ApiImplicitParams(
-        {
-            @ApiImplicitParam(name = "file", value = "源文件", required = true)
-        }
-    )
+    @ApiImplicitParams({ @ApiImplicitParam(name = "file", value = "源文件", required = true) })
     @PostMapping("/page/single")
     public void splitSingle(@RequestParam("file") MultipartFile file) throws Exception {
         InputStream inputStream = file.getInputStream();
@@ -61,11 +57,7 @@ public class SplitterController {
     }
 
     @ApiOperation(value = "页码切分（奇偶页）")
-    @ApiImplicitParams(
-        {
-            @ApiImplicitParam(name = "file", value = "源文件", required = true)
-        }
-    )
+    @ApiImplicitParams({ @ApiImplicitParam(name = "file", value = "源文件", required = true) })
     @PostMapping("/page/odd-even")
     public void splitOddEven(@RequestParam("file") MultipartFile file) throws Exception {
         InputStream inputStream = file.getInputStream();
