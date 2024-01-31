@@ -42,6 +42,7 @@ public class MergeDoc {
         for (InputStream inputStream : inputStreams) {
             Document doc = new Document(inputStream);
             documentList.add(doc);
+            inputStream.close();
         }
         Document document = MergeDoc.AddDocs2Doc(documentList);
         MergeDoc.addContents(document);
